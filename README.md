@@ -1,25 +1,32 @@
 # *RoseTTAFold* 
 This package contains deep learning models and related scripts to run RoseTTAFold.  
 This repository is the official implementation of RoseTTAFold: Accurate prediction of protein structures and interactions using a 3-track network.
+Forked from https://github.com/RosettaCommons/RoseTTAFold.
+
+使用说明：https://www.jianshu.com/p/be32a18087c1
+########################################################
+1. 避开uniref30、BFD这两个超大数据包的下载、解压及运算
+2. 修改了RoseTTAFold和folding环境文件，适合国内安装，提供了便捷的pyRosetta安装方式。
+3. 使用网页工具获得MSA和二级结构文件
+4. 可以在win10自带子linux系统下运行
+########################################################
 
 ## Installation
 
-1. Clone the package
+1. 下载源码
 ```
-git clone https://github.com/RosettaCommons/RoseTTAFold.git
-cd RoseTTAFold
+git clone https://github.com/LiuZhen106/RoseTTAFold.git
+cd RoseTTAFold/
 ```
 
-2. Create conda environment using `RoseTTAFold-linux.yml` file and `folding-linux.yml` file. The latter is required to run a pyrosetta version only (run_pyrosetta_ver.sh).
+2. 创建RoseTTAFold环境和folding环境，运行run_e2e_ver_lz.sh只需要RoseTTAFold环境，运行run_pyrosetta_ver_lz.sh需要RoseTTAFold和folding环境。
 ```
 # create conda environment for RoseTTAFold
 #   If your NVIDIA driver compatible with cuda11
-conda env create -f RoseTTAFold-linux.yml
-#   If not (but compatible with cuda10)
-conda env create -f RoseTTAFold-linux-cu101.yml
+conda env create -f RoseTTAFold-linux-lz.yml
 
 # create conda environment for pyRosetta folding & running DeepAccNet
-conda env create -f folding-linux.yml
+conda env create -f folding-linux-lz.yml
 ```
 
 3. Download network weights (under Rosetta-DL Software license -- please see below)  
@@ -30,36 +37,26 @@ wget https://files.ipd.uw.edu/pub/RoseTTAFold/weights.tar.gz
 tar xfz weights.tar.gz
 ```
 
-4. Download and install third-party software if you want to run the entire modeling script (run_pyrosetta_ver.sh)
+4. 下载二级结构模板文件
 ```
-./install_dependencies.sh
-```
-
-5. Download sequence and structure databases
-```
-# uniref30 [46G]
-wget http://wwwuser.gwdg.de/~compbiol/uniclust/2020_06/UniRef30_2020_06_hhsuite.tar.gz
-mkdir -p UniRef30_2020_06
-tar xfz UniRef30_2020_06_hhsuite.tar.gz -C ./UniRef30_2020_06
-
-# BFD [272G]
-wget https://bfd.mmseqs.com/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt.tar.gz
-mkdir -p bfd
-tar xfz bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt.tar.gz -C ./bfd
-
-# structure templates (including *_a3m.ffdata, *_a3m.ffindex) [over 100G]
+# structure templates (including *_a3m.ffdata, *_a3m.ffindex) [114G]
 wget https://files.ipd.uw.edu/pub/RoseTTAFold/pdb100_2021Mar03.tar.gz
 tar xfz pdb100_2021Mar03.tar.gz
-# for CASP14 benchmarks, we used this one: https://files.ipd.uw.edu/pub/RoseTTAFold/pdb100_2020Mar11.tar.gz
 ```
 
-6. Obtain a [PyRosetta licence](https://els2.comotion.uw.edu/product/pyrosetta) and install the package in the newly created `folding` conda environment ([link](http://www.pyrosetta.org/downloads)).
+## 使用方法
+1. 通过在线服务器：https://toolkit.tuebingen.mpg.de/tools/hhblits 获取.a3m文件。
+推荐的参数设置为：
+E-value cutoff for inclusion: 1e-6 ~ 1e-3
+Number of iterations: 2
+Min probability in hitlist (%):50
+Max target hits: 2000
+2. 通过在线服务器：http://bioinf.cs.ucl.ac.uk/psipred/ 获取.horiz文件。
 
-## Usage
-
+3. 新建工作文件夹，将蛋白质序列文件（fasta格式）、下载的.a3m文件（更名为t000_.msa0.a3m）、下载的.horiz文件（更名为t000_.msa0.horiz），共同放到工作目录下
 ```
 # For monomer structure prediction
-cd example
+cd [test, example]
 ../run_[pyrosetta, e2e]_ver.sh input.fa .
 
 # For complex modeling
@@ -67,7 +64,7 @@ cd example
 python network/predict_complex.py -i paired.a3m -o complex -Ls 218 310 
 ```
 
-## Expected outputs
+## 预测结果
 For the pyrosetta version, user will get five final models having estimated CA rms error at the B-factor column (model/model_[1-5].crderr.pdb).  
 For the end-to-end version, there will be a single PDB output having estimated residue-wise CA-lddt at the B-factor column (t000_.e2e.pdb).
 
