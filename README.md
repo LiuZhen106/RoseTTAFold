@@ -3,12 +3,12 @@ This package contains deep learning models and related scripts to run RoseTTAFol
 This repository is the official implementation of RoseTTAFold: Accurate prediction of protein structures and interactions using a 3-track network.
 Forked from https://github.com/RosettaCommons/RoseTTAFold.
 
-使用说明：https://www.jianshu.com/p/be32a18087c1
+使用说明：https://www.jianshu.com/p/be32a18087c1  
 ########################################################
 1. 避开uniref30、BFD这两个超大数据包的下载、解压及运算
 2. 修改了RoseTTAFold和folding环境文件，适合国内安装，提供了便捷的pyRosetta安装方式。
 3. 使用网页工具获得MSA和二级结构文件
-4. 可以在win10自带子linux系统下运行
+4. 可以在win10自带子linux系统下运行  
 ########################################################
 
 ## Installation
